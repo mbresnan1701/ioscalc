@@ -13,6 +13,8 @@ struct CalculatorModel {
     
     private var pendingBinaryOp: PendingBinaryOperation?
     
+    private var variables: Dictionary<String, Double> = [:]
+    
     var result: Double? {
         get {
             return accumulator
@@ -70,6 +72,11 @@ struct CalculatorModel {
     mutating func setOperand(_ operand: Double) {
         accumulator = operand
     }
+    
+    mutating func setOperand(variable named: String) {
+        //TODO
+    }
+    
     
     mutating func updateDescription(with symbol: String) {
         if let operation = operations[symbol] {
