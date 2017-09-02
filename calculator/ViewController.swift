@@ -43,19 +43,20 @@ class ViewController: UIViewController {
                 if digit == "." {
                     if currentText.range(of:".") == nil {
                         display.text = currentText + digit
-                        calcModel.updateDescription(with: digit)
+//                        calcModel.updateDescription(with: digit)
+                        setDescriptionLabel(with: "\(calcModel.description!) + \(digit) ")
                     }
                 } else {
                     display.text = currentText + digit
-                    calcModel.updateDescription(with: digit)
+                    setDescriptionLabel(with: "\(calcModel.description!) + \(digit) ")
                 }
             }
         } else {
             display.text = digit
             userTyping = true
-            calcModel.updateDescription(with: digit)
+            setDescriptionLabel(with: "\(calcModel.description!) + \(digit) ")
         }
-        setDescriptionLabel(with: calcModel.description)
+        setDescriptionLabel(with: calcModel.description!)
     }
     
     @IBAction func pressOperation(_ sender: UIButton) {
@@ -69,7 +70,7 @@ class ViewController: UIViewController {
         if let result = calcModel.result {
             displayValue = result
         }
-        setDescriptionLabel(with: calcModel.description)
+        setDescriptionLabel(with: calcModel.description!)
     }
     
     func setDescriptionLabel(with description: String) {
