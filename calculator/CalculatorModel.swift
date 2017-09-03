@@ -11,29 +11,26 @@ import Foundation
 struct CalculatorModel {
     private var variables: Dictionary<String, Double> = [:]
     
-    /* Deprecated */
-    
+    @available(*, deprecated, message: "no longer needed ...")
     var description: String? {
         return evaluate().description
     }
     
+    @available(*, deprecated, message: "no longer needed ...")
     var result: Double? {
         get {
             return evaluate().result
         }
     }
     
+    @available(*, deprecated, message: "no longer needed ...")
     var resultIsPending: Bool {
         get {
             return evaluate().isPending
         }
     }
     
-    /* Deprecated */
-    
     private var opStack = [Element]()
-    
-    
     
     private var operations: Dictionary<String, Operation> = [
         "π": Operation.constant(Double.pi),
@@ -46,8 +43,7 @@ struct CalculatorModel {
         "-": Operation.binaryOperation(-, { $0 + "-" + $1 }),
         "*": Operation.binaryOperation(*, { $0 + "*" + $1 }),
         "÷": Operation.binaryOperation(/, { $0 + "/" + $1 }),
-        "=": Operation.equals,
-        "CLR": Operation.clear
+        "=": Operation.equals
     ]
     
     private enum Operation {
@@ -55,7 +51,6 @@ struct CalculatorModel {
         case unaryOperation((Double) -> Double, (String) -> String)
         case binaryOperation((Double, Double) -> Double, (String, String) -> String)
         case equals
-        case clear
     }
     
     private enum Element {
@@ -70,6 +65,10 @@ struct CalculatorModel {
     
     mutating func setOperand(variable named: String) {
         opStack.append(Element.variable(named))
+    }
+    
+    mutating func performOperation(_ symbol: String) {
+        opStack.append(Element.operation(symbol))
     }
     
     func evaluate(using variables: Dictionary<String,Double>? = nil) -> (result: Double?, isPending: Bool, description: String) {
@@ -125,7 +124,6 @@ struct CalculatorModel {
                     switch operation {
                     case .constant(let value):
                         accumulator = (value, "\(value)")
-//                        updateDescription(with: symbol)
                     case .unaryOperation(let function, let description):
                         if accumulator != nil {
                             accumulator = (function(accumulator!.0), description(accumulator!.1))
@@ -139,9 +137,6 @@ struct CalculatorModel {
                         }
                     case .equals:
                         performPendingBinaryOperation()
-                    case .clear:
-                        pendingBinaryOp = nil
-                        accumulator = (0, "")
                     }
                 }
             case .variable(let symbol):
@@ -156,11 +151,5 @@ struct CalculatorModel {
         return (result, pendingBinaryOp != nil, description ?? "")
         
     }
-    
-    mutating func performOperation(_ symbol: String) {
-        opStack.append(Element.operation(symbol))
-    }
-
-    
 
 }

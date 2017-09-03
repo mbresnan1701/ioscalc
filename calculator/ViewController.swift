@@ -38,43 +38,56 @@ class ViewController: UIViewController {
     
     @IBAction func numberPressed(_ sender: UIButton) {
         let digit = sender.currentTitle!
+        let evaluated = calcModel.evaluate()
+
         if userTyping {
             if let currentText = display.text {
                 if digit == "." {
                     if currentText.range(of:".") == nil {
                         display.text = currentText + digit
-//                        calcModel.updateDescription(with: digit)
-                        setDescriptionLabel(with: "\(calcModel.description!) + \(digit) ")
+                        setDescriptionLabel(with: "\(evaluated.description) + \(digit) ")
                     }
                 } else {
                     display.text = currentText + digit
-                    setDescriptionLabel(with: "\(calcModel.description!) + \(digit) ")
+                    setDescriptionLabel(with: "\(evaluated.description) + \(digit) ")
                 }
             }
         } else {
             display.text = digit
             userTyping = true
-            setDescriptionLabel(with: "\(calcModel.description!) + \(digit) ")
+            setDescriptionLabel(with: "\(evaluated.description) + \(digit) ")
         }
-        setDescriptionLabel(with: calcModel.description!)
+        setDescriptionLabel(with: evaluated.description)
+    }
+    
+    @IBAction func clear(_ sender: UIButton) {
+        
+        calcModel = CalculatorModel()
+        displayValue = 0
+        descriptionLabel.text = " "
+        userTyping = false
     }
     
     @IBAction func pressOperation(_ sender: UIButton) {
+        var evaluated = calcModel.evaluate()
         if userTyping {
             calcModel.setOperand(displayValue)
             userTyping = false
         }
         if let symbol = sender.currentTitle {
             calcModel.performOperation(symbol)
+            evaluated = calcModel.evaluate()
         }
-        if let result = calcModel.result {
+        if let result = evaluated.result {
             displayValue = result
         }
-        setDescriptionLabel(with: calcModel.description!)
+        setDescriptionLabel(with: evaluated.description)
     }
     
     func setDescriptionLabel(with description: String) {
-        if calcModel.resultIsPending {
+        let evaluated = calcModel.evaluate()
+
+        if evaluated.isPending {
             descriptionLabel.text = description + " ..."
         } else {
             descriptionLabel.text = description + " ="
