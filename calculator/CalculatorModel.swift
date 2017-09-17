@@ -9,7 +9,7 @@
 import Foundation
 
 struct CalculatorModel {
-    private var variables: Dictionary<String, Double> = [:]
+//    private var variables: Dictionary<String, Double> = [:]
     
     @available(*, deprecated, message: "no longer needed ...")
     var description: String? {
@@ -141,9 +141,9 @@ struct CalculatorModel {
                 }
             case .variable(let symbol):
                 if let value = variables?[symbol] {
-                    accumulator = (value, "\(value)")
+                    accumulator = (value, "\(symbol)")
                 } else {
-                    accumulator = (0, "0")
+                    accumulator = (0, "\(symbol)")
                 }
                 
             }

@@ -15,6 +15,8 @@ class ViewController: UIViewController {
     
     var userTyping = false
     
+    private var memVariables: Dictionary<String, Double> = [:]
+    
     private var calcModel = CalculatorModel()
     
     override func viewDidLoad() {
@@ -66,22 +68,37 @@ class ViewController: UIViewController {
         displayValue = 0
         descriptionLabel.text = " "
         userTyping = false
+        memVariables = [:]
     }
     
     @IBAction func pressOperation(_ sender: UIButton) {
-        var evaluated = calcModel.evaluate()
+        var evaluated = calcModel.evaluate(using: memVariables)
         if userTyping {
             calcModel.setOperand(displayValue)
             userTyping = false
         }
         if let symbol = sender.currentTitle {
             calcModel.performOperation(symbol)
-            evaluated = calcModel.evaluate()
+            evaluated = calcModel.evaluate(using: memVariables)
         }
         if let result = evaluated.result {
             displayValue = result
         }
         setDescriptionLabel(with: evaluated.description)
+    }
+    
+    @IBAction func memoryButtonPressed(_ sender: UIButton) {
+        if sender.currentTitle == "→M" {
+            memVariables["M"] = displayValue
+            if let evalResult = calcModel.evaluate(using: memVariables).result {
+                displayValue = evalResult
+            }
+        } else {
+            calcModel.setOperand(variable: "M")
+            if let evalResult = calcModel.evaluate(using: memVariables).result {
+                displayValue = evalResult
+            }
+        }
     }
     
     func setDescriptionLabel(with description: String) {
