@@ -118,7 +118,11 @@ struct CalculatorModel {
         for element in opStack {
             switch element {
             case .operand(let value):
-                accumulator = (value, "\(value)")
+                if accumulator != nil {
+                    accumulator = (value, "\(accumulator!.1)")
+                } else {
+                    accumulator = (value, "\(value)")
+                }
             case .operation(let symbol):
                 if let operation = operations[symbol] {
                     switch operation {
