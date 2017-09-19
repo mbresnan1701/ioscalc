@@ -41,7 +41,7 @@ struct CalculatorModel {
         "tan": Operation.unaryOperation(tan, {"tan(" + $0 + ")"}),
         "+": Operation.binaryOperation(+, { $0 + "+" + $1 }),
         "-": Operation.binaryOperation(-, { $0 + "-" + $1 }),
-        "*": Operation.binaryOperation(*, { $0 + "*" + $1 }),
+        "x": Operation.binaryOperation(*, { $0 + "X" + $1 }),
         "÷": Operation.binaryOperation(/, { $0 + "/" + $1 }),
         "=": Operation.equals
     ]
@@ -69,6 +69,12 @@ struct CalculatorModel {
     
     mutating func performOperation(_ symbol: String) {
         opStack.append(Element.operation(symbol))
+    }
+    
+    mutating func popOperationStack() {
+        if(opStack.count > 0) {
+            opStack.removeLast()
+        }
     }
     
     func evaluate(using variables: Dictionary<String,Double>? = nil) -> (result: Double?, isPending: Bool, description: String) {

@@ -12,6 +12,7 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var display: UILabel!
     @IBOutlet weak var descriptionLabel: UILabel!
+    @IBOutlet weak var memLabel: UILabel!
     
     var userTyping = false
     
@@ -69,6 +70,7 @@ class ViewController: UIViewController {
         descriptionLabel.text = " "
         userTyping = false
         memVariables = [:]
+        memLabel.alpha = 0.0
     }
     
     @IBAction func pressOperation(_ sender: UIButton) {
@@ -90,6 +92,8 @@ class ViewController: UIViewController {
     @IBAction func memoryButtonPressed(_ sender: UIButton) {
         if sender.currentTitle == "→M" {
             memVariables["M"] = displayValue
+            memLabel.alpha = 1
+            memLabel.text = "M = \(displayValue)"
             if let evalResult = calcModel.evaluate(using: memVariables).result {
                 displayValue = evalResult
             }
@@ -101,13 +105,31 @@ class ViewController: UIViewController {
         }
     }
     
+    @IBAction func undoPressed(_ sender: UIButton) {
+        if userTyping {
+            if let currentText = display.text {
+                if(display.text! != "") {
+                    display.text = currentText.substring(to: currentText.index(before: currentText.endIndex))
+                }
+            }
+        } else {
+            calcModel.popOperationStack()
+            let evaluated = calcModel.evaluate(using: memVariables)
+            if let result = evaluated.result {
+                displayValue = result
+            }
+            setDescriptionLabel(with: evaluated.description)
+
+        }
+    }
+    
     func setDescriptionLabel(with description: String) {
         let evaluated = calcModel.evaluate()
 
         if evaluated.isPending {
-            descriptionLabel.text = description + " ..."
+            descriptionLabel.text = evaluated.description + " ..."
         } else {
-            descriptionLabel.text = description + " ="
+            descriptionLabel.text = evaluated.description + " ="
         }
     }
 }
